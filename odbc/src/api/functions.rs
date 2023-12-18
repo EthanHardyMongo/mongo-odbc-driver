@@ -344,7 +344,7 @@ pub unsafe extern "C" fn SQLBindCol(
     length_or_indicatior: *mut Len,
 ) -> SqlReturn {
     //unimpl!(hstmt);
-    panic_safe_exec_clear_diagnostics!(
+    panic_safe_exec_keep_diagnostics!(
         debug,
         || {
             let mongo_handle = MongoHandleRef::from(hstmt);
