@@ -337,13 +337,42 @@ fn sql_alloc_handle(
 #[no_mangle]
 pub unsafe extern "C" fn SQLBindCol(
     hstmt: HStmt,
-    _col_number: USmallInt,
-    _target_type: SmallInt,
-    _target_value: Pointer,
-    _buffer_length: Len,
-    _length_or_indicatior: *mut Len,
+    col_number: USmallInt,
+    target_type: SmallInt,
+    target_value: Pointer,
+    buffer_length: Len,
+    length_or_indicatior: *mut Len,
 ) -> SqlReturn {
-    unimpl!(hstmt);
+    //unimpl!(hstmt);
+    panic_safe_exec_clear_diagnostics!(
+        debug,
+        || {
+            let mongo_handle = MongoHandleRef::from(hstmt);
+            let stmt = must_be_valid!((*mongo_handle).as_statement());
+
+            if stmt.bound_cols.read().unwrap().is_none() {
+                *stmt.bound_cols.write().unwrap() = Some(HashMap::new());
+            }
+
+            let bound_col_info = BoundColInfo {
+                target_type,
+                target_buffer: target_value,
+                buffer_length,
+                length_or_indicatior,
+            };
+
+            stmt
+                .bound_cols
+                .write()
+                .unwrap()
+                .as_mut()
+                .unwrap()
+                .insert(col_number, bound_col_info);
+
+            SqlReturn::SUCCESS
+        },
+        hstmt
+    );
 }
 
 ///
@@ -1309,7 +1338,8 @@ fn sql_free_handle(handle_type: HandleType, handle: *mut MongoHandle) -> Result<
 #[named]
 #[no_mangle]
 pub unsafe extern "C" fn SQLFreeStmt(statement_handle: HStmt, _option: SmallInt) -> SqlReturn {
-    unimpl!(statement_handle);
+    //unimpl!(statement_handle);
+    SqlReturn::SUCCESS
 }
 
 ///
