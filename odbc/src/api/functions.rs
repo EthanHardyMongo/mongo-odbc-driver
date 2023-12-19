@@ -361,8 +361,7 @@ pub unsafe extern "C" fn SQLBindCol(
                 length_or_indicatior,
             };
 
-            stmt
-                .bound_cols
+            stmt.bound_cols
                 .write()
                 .unwrap()
                 .as_mut()
@@ -1168,7 +1167,31 @@ pub unsafe extern "C" fn SQLFetch(statement_handle: HStmt) -> SqlReturn {
 
                 *stmt.var_data_cache.write().unwrap() = Some(HashMap::new());
 
-                if !warnings_opt.is_empty() {
+                let mut success_with_info_encountered = false;
+
+                if stmt.bound_cols.read().unwrap().is_some() {
+                    let mongo_handle_for_sql_get_data_helper = MongoHandleRef::from(statement_handle);
+
+                    for (col, bound_col_info) in stmt.bound_cols.read().unwrap().as_ref().unwrap().iter() {
+                        let sql_return = sql_get_data_helper(
+                            mongo_handle_for_sql_get_data_helper,
+                            *col,
+                            FromPrimitive::from_i16(bound_col_info.target_type).unwrap(),
+                            bound_col_info.target_buffer,
+                            bound_col_info.buffer_length,
+                            bound_col_info.length_or_indicatior,
+                        );
+
+                        match sql_return {
+                            SqlReturn::ERROR => return SqlReturn::ERROR,
+                            SqlReturn::SUCCESS_WITH_INFO => {
+                                success_with_info_encountered = true;
+                            }
+                            _ => {}
+                        }
+                    }
+                }
+                if !warnings_opt.is_empty() || success_with_info_encountered {
                     // No warnings and there is a next row
                     SqlReturn::SUCCESS_WITH_INFO
                 } else {
