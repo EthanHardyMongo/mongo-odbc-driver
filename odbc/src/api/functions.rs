@@ -918,6 +918,8 @@ fn sql_driver_connect(conn: &Connection, odbc_uri_string: &str) -> Result<MongoC
         }
     }
 
+    *conn.type_mode.write().unwrap() = TypeMode::Simple;
+
     let mut conn_attrs = conn.attributes.write().unwrap();
     let database = if conn_attrs.current_catalog.is_some() {
         conn_attrs.current_catalog.as_deref().map(|s| s.to_string())
