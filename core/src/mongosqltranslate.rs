@@ -93,6 +93,9 @@ pub fn load_mongosqltranslate_library() {
                 );
             }
             Err(e) => {
+                if let libloading::Error::LoadLibraryExW {ref source} = e {
+                    log::warn!("windows error: {:?}", source);
+                }
                 log::warn!(
                     "Failed to load the mongosqltranslate library from {}: {}",
                     library_path.display(),
