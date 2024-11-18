@@ -1185,8 +1185,7 @@ pub unsafe extern "C" fn SQLDriverConnectW(
             // SQL_NO_PROMPT is the only option supported for DriverCompletion
             match FromPrimitive::from_u16(driver_completion) {
                 Some(driver_completion) => match driver_completion {
-                    DriverConnectOption::SQL_DRIVER_COMPLETE
-                    | DriverConnectOption::SQL_DRIVER_COMPLETE_REQUIRED
+                    DriverConnectOption::SQL_DRIVER_COMPLETE_REQUIRED
                     | DriverConnectOption::SQL_DRIVER_PROMPT => {
                         add_diag_info!(
                             conn_handle,
@@ -1196,7 +1195,8 @@ pub unsafe extern "C" fn SQLDriverConnectW(
                         );
                         return SqlReturn::ERROR;
                     }
-                    DriverConnectOption::SQL_DRIVER_NO_PROMPT => {}
+                    DriverConnectOption::SQL_DRIVER_COMPLETE
+                    | DriverConnectOption::SQL_DRIVER_NO_PROMPT => {}
                 },
                 None => {
                     add_diag_info!(
