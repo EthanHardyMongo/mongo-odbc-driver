@@ -3578,6 +3578,9 @@ unsafe fn set_connect_attrw_helper(
                     SqlReturn::SUCCESS_WITH_INFO
                 }
             },
+            ConnectionAttribute::SQL_ATTR_ACCESS_MODE => {
+                SqlReturn::SUCCESS
+            }
             _ => {
                 err = Some(ODBCError::UnsupportedConnectionAttribute(
                     connection_attribute_to_string(attribute),
