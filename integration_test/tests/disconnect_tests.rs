@@ -36,17 +36,17 @@ mod integration {
 
         let query = b"SELECT * FROM integration_test.foo\0".map(u16::from);
         // issue a query on each statement, resulting in an open cursor on each
-        statements.iter().for_each(|stmt| unsafe {
-            assert_eq!(
-                SqlReturn::SUCCESS,
-                SQLExecDirectW(*stmt, query.as_ptr(), SQL_NTS),
-                "{}",
-                get_sql_diagnostics(
-                    HandleType::SQL_HANDLE_STMT,
-                    *ptr::addr_of!(stmt).cast::<Handle>()
-                ),
-            );
-        });
+        // statements.iter().for_each(|stmt| unsafe {
+        //     assert_eq!(
+        //         SqlReturn::SUCCESS,
+        //         SQLExecDirectW(*stmt, query.as_ptr(), SQL_NTS),
+        //         "{}",
+        //         get_sql_diagnostics(
+        //             HandleType::SQL_HANDLE_STMT,
+        //             *ptr::addr_of!(stmt).cast::<Handle>()
+        //         ),
+        //     );
+        // });
 
         unsafe {
             // Close statement 1

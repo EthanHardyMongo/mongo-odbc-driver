@@ -4206,7 +4206,7 @@ pub unsafe extern "C" fn SQLTablesW(
             let table_t = input_text_to_string_w(table_type, name_length_4.into());
             let connection = (*stmt.connection).as_connection().unwrap();
             let max_string_length = *connection.max_string_length.read().unwrap();
-            info!("about to ender sql_tables. parameters: catalog: `{0}`, schema: `{1}`, table: `{2}`, table_t: `{3}`, max_string_length: `{4}`, odbc_behavior: `{5}`", &catalog, &schema, &table, &table_t, max_string_length, odbc_behavior);
+            info!("about to ender sql_tables. parameters: catalog: `{0}`, schema: `{1}`, table: `{2}`, table_t: `{3}`, max_string_length: `{4:?}`, odbc_behavior: `{5}`", &catalog, &schema, &table, &table_t, max_string_length, odbc_behavior);
             let mongo_statement = sql_tables(
                 connection
                     .mongo_connection
