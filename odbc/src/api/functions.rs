@@ -4135,7 +4135,14 @@ fn sql_tables(
             Some(query_timeout),
         ))),
         ("", SQL_ALL_SCHEMAS, "", "") => {
-            Ok(Box::new(MongoCollections::all_schemas(max_string_length)))
+            MongoCollections::all_schemas(max_string_length);
+
+            MongoDatabases::all_cats(max_string_length);
+
+            Ok(Box::new(MongoDatabases::list_all_catalogs(
+                mongo_connection,
+                Some(query_timeout),
+            )))
         }
         ("", "", "", SQL_ALL_TABLE_TYPES) => Ok(Box::new(MongoTableTypes::all_table_types())),
         _ => Ok(Box::new(MongoCollections::list_tables(

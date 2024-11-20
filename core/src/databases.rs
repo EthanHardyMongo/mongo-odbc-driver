@@ -231,6 +231,10 @@ impl MongoDatabases {
         }
     }
 
+    pub fn all_cats(max_string_length: Option<u16>) {
+        DATABASES_METADATA.get_or_init(|| init_databases_metadata(max_string_length));
+    }
+
     pub fn empty() -> MongoDatabases {
         MongoDatabases {
             database_names: vec![],
@@ -254,13 +258,13 @@ impl MongoStatement for MongoDatabases {
         // 2..=4 -> Null
         // 5 => "" (Remarks)
         match col_index {
-            1 => Ok(Some(Bson::String(
+            1 | 2 => Ok(Some(Bson::String(
                 self.database_names
                     .get(self.current_db_index - 1)
                     .unwrap()
                     .to_string(),
             ))),
-            2..=5 => Ok(Some(Bson::Null)),
+            3..=5 => Ok(Some(Bson::Null)),
             _ => Err(Error::ColIndexOutOfBounds(col_index)),
         }
     }

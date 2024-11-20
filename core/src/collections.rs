@@ -168,11 +168,15 @@ impl MongoCollections {
     }
 
     // Statement for SQLTables("", SQL_ALL_SCHEMAS,"").
-    pub fn all_schemas(max_string_length: Option<u16>) -> EmptyStatement {
-        EmptyStatement {
-            resultset_metadata: COLLECTIONS_METADATA
-                .get_or_init(|| init_collections_metadata(max_string_length)),
-        }
+    // pub fn all_schemas(max_string_length: Option<u16>) -> EmptyStatement {
+    //     EmptyStatement {
+    //         resultset_metadata: COLLECTIONS_METADATA
+    //             .get_or_init(|| init_collections_metadata(max_string_length)),
+    //     }
+    // }
+
+    pub fn all_schemas(max_string_length: Option<u16>) {
+        COLLECTIONS_METADATA.get_or_init(|| init_collections_metadata(max_string_length));
     }
 
     pub fn empty() -> MongoCollections {
