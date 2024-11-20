@@ -267,6 +267,7 @@ impl MongoStatement for MongoDatabases {
             ))),
             3 => Ok(Some(Bson::String("fake_table_name".to_string()))),
             4 => Ok(Some(Bson::String(TABLE.to_string()))),
+            5 => Ok(Some(Bson::String("fake_remarks".to_string()))),
             _ => Err(Error::ColIndexOutOfBounds(col_index)),
         }
     }
