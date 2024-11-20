@@ -4193,7 +4193,7 @@ pub unsafe extern "C" fn SQLTablesW(
     table_type: *const WideChar,
     name_length_4: SmallInt,
 ) -> SqlReturn {
-    panic_safe_exec_clear_diagnostics!(
+    panic_safe_exec_keep_diagnostics!(
         debug,
         || {
             info!("entered SQLTablesW");
