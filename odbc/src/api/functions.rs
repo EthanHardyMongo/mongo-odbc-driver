@@ -4131,11 +4131,15 @@ fn sql_tables(
 ) -> Result<Box<dyn MongoStatement>> {
     info!("you are in sql_tables helper func");
     match (catalog, schema, table, table_t) {
-        (SQL_ALL_CATALOGS, "", "", "") => Ok(Box::new(MongoDatabases::list_all_catalogs(
+        (SQL_ALL_CATALOGS, "", "", "") =>{
+            info!("first option");
+
+            Ok(Box::new(MongoDatabases::list_all_catalogs(
             mongo_connection,
             Some(query_timeout),
-        ))),
+        )))},
         ("", SQL_ALL_SCHEMAS, "", "") => {
+            info!("second option");
             MongoCollections::all_schemas(max_string_length);
 
             MongoDatabases::all_cats(max_string_length);
@@ -4145,8 +4149,11 @@ fn sql_tables(
                 Some(query_timeout),
             )))
         }
-        ("", "", "", SQL_ALL_TABLE_TYPES) => Ok(Box::new(MongoTableTypes::all_table_types())),
+        ("", "", "", SQL_ALL_TABLE_TYPES) => {
+            info!("third option");
+            Ok(Box::new(MongoTableTypes::all_table_types()))},
         _ => {
+            info!("fourth option");
             log::info!("entering list_tables");
 
             let res: Result<Box<dyn MongoStatement>> = Ok(Box::new(MongoCollections::list_tables(
