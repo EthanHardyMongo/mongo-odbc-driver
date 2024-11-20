@@ -279,7 +279,7 @@ impl MongoStatement for MongoCollections {
                     .database_name
                     .clone(),
             ),
-            2 => Bson::Null,
+            2 => Bson::String("schema mock".to_string()),
             3 => Bson::String(self.current_collection.as_ref().unwrap().name.clone()),
             4 => {
                 let coll_type = format!(
