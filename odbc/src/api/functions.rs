@@ -4129,6 +4129,7 @@ fn sql_tables(
     odbc_3_behavior: bool,
     max_string_length: Option<u16>,
 ) -> Result<Box<dyn MongoStatement>> {
+    info!("you are in sql_tables helper func");
     match (catalog, schema, table, table_t) {
         (SQL_ALL_CATALOGS, "", "", "") => Ok(Box::new(MongoDatabases::list_all_catalogs(
             mongo_connection,
