@@ -6,6 +6,7 @@ use definitions::Nullability;
 use mongodb::bson::Bson;
 
 use once_cell::sync::OnceCell;
+use crate::util::TABLE;
 
 pub(crate) static DATABASES_METADATA: OnceCell<Vec<MongoColMetadata>> = OnceCell::new();
 
@@ -264,7 +265,8 @@ impl MongoStatement for MongoDatabases {
                     .unwrap()
                     .to_string(),
             ))),
-            3..=5 => Ok(Some(Bson::Null)),
+            3 => Ok(Some(Bson::String("fake_table_name".to_string()))),
+            4 => Ok(Some(Bson::String(TABLE.to_string()))),
             _ => Err(Error::ColIndexOutOfBounds(col_index)),
         }
     }
