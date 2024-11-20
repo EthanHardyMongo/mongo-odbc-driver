@@ -4196,6 +4196,7 @@ pub unsafe extern "C" fn SQLTablesW(
     panic_safe_exec_clear_diagnostics!(
         debug,
         || {
+            info!("entered SQLTablesW");
             let mongo_handle = MongoHandleRef::from(statement_handle);
             let odbc_behavior = has_odbc_3_behavior!(mongo_handle);
             let stmt = must_be_valid!((*mongo_handle).as_statement());
@@ -4205,6 +4206,7 @@ pub unsafe extern "C" fn SQLTablesW(
             let table_t = input_text_to_string_w(table_type, name_length_4.into());
             let connection = (*stmt.connection).as_connection().unwrap();
             let max_string_length = *connection.max_string_length.read().unwrap();
+            info!("about to ender sql_tables. parameters: catalog: `{0}`, schema: `{1}`, table: `{2}`, table_t: `{3}`, max_string_length: `{4}`, odbc_behavior: `{5}`", &catalog, &schema, &table, &table_t, max_string_length.unwrap(), odbc_behavior);
             let mongo_statement = sql_tables(
                 connection
                     .mongo_connection
@@ -4225,6 +4227,7 @@ pub unsafe extern "C" fn SQLTablesW(
                 odbc_behavior,
                 max_string_length,
             );
+            info!("left sql_tables");
             let mongo_statement = odbc_unwrap!(mongo_statement, mongo_handle);
             *stmt.mongo_statement.write().unwrap() = Some(mongo_statement);
             SqlReturn::SUCCESS
