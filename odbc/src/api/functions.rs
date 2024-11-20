@@ -4145,14 +4145,22 @@ fn sql_tables(
             )))
         }
         ("", "", "", SQL_ALL_TABLE_TYPES) => Ok(Box::new(MongoTableTypes::all_table_types())),
-        _ => Ok(Box::new(MongoCollections::list_tables(
+        _ => {
+            log::info!("entering list_tables");
+
+            let res: Result<Box<dyn MongoStatement>> = Ok(Box::new(MongoCollections::list_tables(
             mongo_connection,
             Some(query_timeout),
             catalog,
             table,
             table_t,
             odbc_3_behavior,
-        ))),
+        )));
+
+            log::info!("finished list_tables");
+
+            res
+        },
     }
 }
 

@@ -116,6 +116,7 @@ impl MongoCollections {
         table_type: &str,
         accept_search_patterns: bool,
     ) -> Self {
+        log::info!("just got in list_tables");
         let databases = mongo_connection.runtime.block_on(async {
             future::join_all(
                 mongo_connection
@@ -156,6 +157,8 @@ impl MongoCollections {
             )
             .await
         });
+
+        log::info!("about to leave list_tables");
 
         MongoCollections {
             current_collection: None,
