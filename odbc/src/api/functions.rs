@@ -4207,7 +4207,12 @@ pub unsafe extern "C" fn SQLTablesW(
             info!("4");
             let schema = input_text_to_string_w(schema_name, name_length_2.into());
             info!("5");
-            let table = input_text_to_string_w(table_name, name_length_3.into());
+            let table: String = if table_name.is_null(){
+                "".to_string()
+            } else{
+                input_text_to_string_w(table_name, name_length_3.into())
+            };
+            //let table = input_text_to_string_w(table_name, name_length_3.into());
             info!("6");
             let table_t = input_text_to_string_w(table_type, name_length_4.into());
             info!("7");
