@@ -1185,8 +1185,7 @@ pub unsafe extern "C" fn SQLDriverConnectW(
             // SQL_NO_PROMPT is the only option supported for DriverCompletion
             match FromPrimitive::from_u16(driver_completion) {
                 Some(driver_completion) => match driver_completion {
-                    DriverConnectOption::SQL_DRIVER_COMPLETE
-                    | DriverConnectOption::SQL_DRIVER_COMPLETE_REQUIRED
+                    DriverConnectOption::SQL_DRIVER_COMPLETE_REQUIRED
                     | DriverConnectOption::SQL_DRIVER_PROMPT => {
                         add_diag_info!(
                             conn_handle,
@@ -1196,7 +1195,8 @@ pub unsafe extern "C" fn SQLDriverConnectW(
                         );
                         return SqlReturn::ERROR;
                     }
-                    DriverConnectOption::SQL_DRIVER_NO_PROMPT => {}
+                    DriverConnectOption::SQL_DRIVER_COMPLETE
+                    | DriverConnectOption::SQL_DRIVER_NO_PROMPT => {}
                 },
                 None => {
                     add_diag_info!(
@@ -3578,6 +3578,7 @@ unsafe fn set_connect_attrw_helper(
                     SqlReturn::SUCCESS_WITH_INFO
                 }
             },
+            ConnectionAttribute::SQL_ATTR_ACCESS_MODE => SqlReturn::SUCCESS,
             _ => {
                 err = Some(ODBCError::UnsupportedConnectionAttribute(
                     connection_attribute_to_string(attribute),
@@ -4174,8 +4175,18 @@ pub unsafe extern "C" fn SQLTablesW(
             let odbc_behavior = has_odbc_3_behavior!(mongo_handle);
             let stmt = must_be_valid!((*mongo_handle).as_statement());
             let catalog = input_text_to_string_w(catalog_name, name_length_1.into());
-            let schema = input_text_to_string_w(schema_name, name_length_2.into());
-            let table = input_text_to_string_w(table_name, name_length_3.into());
+            let schema: String = if schema_name.is_null() {
+                "".to_string()
+            } else {
+                input_text_to_string_w(schema_name, name_length_2.into())
+            };
+            //let schema = input_text_to_string_w(schema_name, name_length_2.into());
+            let table: String = if table_name.is_null() {
+                "".to_string()
+            } else {
+                input_text_to_string_w(table_name, name_length_3.into())
+            };
+            //let table = input_text_to_string_w(table_name, name_length_3.into());
             let table_t = input_text_to_string_w(table_type, name_length_4.into());
             let connection = (*stmt.connection).as_connection().unwrap();
             let max_string_length = *connection.max_string_length.read().unwrap();
