@@ -4198,13 +4198,21 @@ pub unsafe extern "C" fn SQLTablesW(
         || {
             info!("entered SQLTablesW");
             let mongo_handle = MongoHandleRef::from(statement_handle);
+            info!("1");
             let odbc_behavior = has_odbc_3_behavior!(mongo_handle);
+            info!("2");
             let stmt = must_be_valid!((*mongo_handle).as_statement());
+            info!("3");
             let catalog = input_text_to_string_w(catalog_name, name_length_1.into());
+            info!("4");
             let schema = input_text_to_string_w(schema_name, name_length_2.into());
+            info!("5");
             let table = input_text_to_string_w(table_name, name_length_3.into());
+            info!("6");
             let table_t = input_text_to_string_w(table_type, name_length_4.into());
+            info!("7");
             let connection = (*stmt.connection).as_connection().unwrap();
+            info!("8");
             let max_string_length = *connection.max_string_length.read().unwrap();
             info!("about to ender sql_tables. parameters: catalog: `{0}`, schema: `{1}`, table: `{2}`, table_t: `{3}`, max_string_length: `{4:?}`, odbc_behavior: `{5}`", &catalog, &schema, &table, &table_t, max_string_length, odbc_behavior);
             let mongo_statement = sql_tables(
