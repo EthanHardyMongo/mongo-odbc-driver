@@ -2897,6 +2897,7 @@ macro_rules! sql_get_info_helper {
                         string_length_ptr,
                     )
                 }
+                InfoType::SQL_KEYWORDS => SqlReturn::SUCCESS,
                 _ => {
                     err = Some(ODBCError::UnsupportedInfoTypeRetrieval(
                         info_type.to_string(),
