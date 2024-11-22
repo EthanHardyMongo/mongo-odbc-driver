@@ -576,8 +576,6 @@ impl MongoFields {
                             let schema_collection =
                                 db.collection::<Document>(SQL_SCHEMAS_COLLECTION);
 
-                            log::info!("current DB: {}. schema collection: {:?}", &self.current_db_name, &schema_collection);
-
                             // If the schema for `collection_name` isn't found, default to an empty schema.
                             let schema_doc: Document = schema_collection
                                 .find_one(doc! {
