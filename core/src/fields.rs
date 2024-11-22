@@ -579,7 +579,7 @@ impl MongoFields {
                             // If the schema for `collection_name` isn't found, default to an empty schema.
                             let schema_doc: Document = schema_collection
                                 .find_one(doc! {
-                                    "_id": collection_name.clone()
+                                    "_id": &collection_name
                                 })
                                 .await
                                 .map_err(Error::QueryExecutionFailed)?
