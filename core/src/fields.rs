@@ -579,16 +579,18 @@ impl MongoFields {
                             // If the schema for `collection_name` isn't found, default to an empty schema.
                             let schema_doc: Document = schema_collection
                                 .find_one(doc! {
-                                    "_id": &collection_name
+                                    "_id": collection_name.clone()
                                 })
                                 .await
                                 .map_err(Error::QueryExecutionFailed)?
                                 .unwrap_or({
-                                    log::warn!("No schema was found for collection `{}`. It will be assigned\
+                                    log::warn!("No schema was found for collection `{}`. It will be assigned \
                                     an empty schema. Hint: Generate schemas for your collections.", collection_name);
 
                                     doc! {
-                                    "schema": doc!{}
+                                    "schema": doc!{
+                                        "bsonType": "object"
+                                    }
                                 }});
 
                             let result_set_schema: Result<ResultSetSchema> =
