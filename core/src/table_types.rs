@@ -28,6 +28,11 @@ impl MongoStatement for MongoTableTypes {
     // Increment current_table_type_index.
     // Return true if current_table_type_index index is <= for table_type.length.
     fn next(&mut self, _: Option<&MongoConnection>) -> Result<(bool, Vec<Error>)> {
+        // Guard against unbounded index growth: Once the cursor is exhausted we
+        // stop incrementing to avoid index overflow.
+        if self.current_table_type_index >= self.table_type.len() {
+            return Ok((false, vec![]));
+        }
         self.current_table_type_index += 1;
         Ok((
             self.current_table_type_index <= self.table_type.len(),
