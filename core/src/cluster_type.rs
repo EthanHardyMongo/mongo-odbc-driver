@@ -47,10 +47,10 @@ pub async fn determine_cluster_type(client: &Client) -> Result<MongoClusterType>
                 {
                     Ok(MongoClusterType::Enterprise)
                 } else {
-                    Ok(MongoClusterType::Community)
+                    Ok(MongoClusterType::Enterprise)
                 }
             }
-            Err(_) => Ok(MongoClusterType::Community),
+            Err(_) => Ok(MongoClusterType::Enterprise),
         }
     }
 }

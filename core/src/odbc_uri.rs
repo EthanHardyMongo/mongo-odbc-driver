@@ -351,6 +351,19 @@ impl ODBCUri {
             opts.credential = Some(Credential::builder().username(user).password(pwd).build());
         }
 
+        // pub async fn load_password_auth(
+        //     options: &mut ClientOptions,
+        //     username: Option<String>,
+        //     password: Option<String>,
+        // ) {
+        //     options.credential = Some(
+        //         mongodb::options::Credential::builder()
+        //             .username(username)
+        //             .password(password)
+        //             .build(),
+        //     );
+        // }
+
         // Apply server and authSource overrides
         Self::set_server_and_source(opts, server, source)?;
 
