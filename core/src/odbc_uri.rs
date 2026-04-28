@@ -426,29 +426,23 @@ impl ODBCUri {
         self.handle_no_uri().await
     }
 
-    fn check_client_opts_credentials(client_options: &ClientOptions) -> Result<()> {
-        if client_options
-            .credential
-            .as_ref()
-            .unwrap()
-            .username
-            .is_none()
+    fn check_client_opts_credentials(client_options: &mut ClientOptions) -> Result<()> {
+        let credential = client_options.credential.clone().unwrap();
+
+        if credential.username.is_none()
         {
             return Err(Error::InvalidUriFormat(format!(
                 "One of {USER_KWS:?} is required for a valid Mongo ODBC Uri"
             )));
         }
-        if client_options
-            .credential
-            .as_ref()
-            .unwrap()
-            .password
-            .is_none()
+        if credential.password.is_none()
         {
             return Err(Error::InvalidUriFormat(format!(
                 "One of {PWD_KWS:?} is required for a valid Mongo ODBC Uri"
             )));
         }
+
+        client_options.credential = Some(Credential::builder().username(credential.username).password(credential.password).build());
         Ok(())
     }
 
