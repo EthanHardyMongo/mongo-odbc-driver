@@ -10,10 +10,20 @@ use mongodb::{
     },
 };
 use once_cell::sync::OnceCell;
+use percent_encoding::{utf8_percent_encode, AsciiSet};
 use regex::{Regex, RegexBuilder, RegexSet, RegexSetBuilder};
 use shared_sql_utils::Dsn;
 use std::collections::HashMap;
 use std::str::FromStr;
+
+const GEN_DELIMS: &AsciiSet = &AsciiSet::EMPTY
+    .add(b':')
+    .add(b'/')
+    .add(b'?')
+    .add(b'#')
+    .add(b'[')
+    .add(b']')
+    .add(b'@');
 
 const EMPTY_URI_ERROR: &str = "URI must not be empty";
 const INVALID_ATTR_FORMAT_ERROR: &str = "all URI attributes must be of the form keyword=value";
@@ -517,13 +527,16 @@ impl ODBCUri {
         let (protocol, rest) = Self::split_uri(uri)?;
         let username = self.get_attribute(USER_KWS);
         let password = self.get_attribute(PWD_KWS);
-        Ok(
-            if let (Some(username), Some(password)) = (username, password) {
-                format!("{protocol}{username}:{password}@{rest}")
-            } else {
-                uri.to_string()
-            },
-        )
+
+        let uri = if let (Some(username), Some(password)) = (username, password) {
+            let encoded_username = utf8_percent_encode(&username, GEN_DELIMS).to_string();
+            let encoded_password = utf8_percent_encode(&password, GEN_DELIMS).to_string();
+            format!("{protocol}{encoded_username}:{encoded_password}@{rest}")
+        } else {
+            uri.to_string()
+        };
+
+        Ok(uri)
     }
 
     async fn handle_uri(&mut self, uri: &str) -> Result<UserOptions> {
